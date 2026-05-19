@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Backend Admin Overview</title>
+    <style>
+      :root {
+        --bg: #f7f8fb;
+        --ink: #172033;
+        --muted: #667085;
+        --line: #d9dee8;
+        --panel: #ffffff;
+        --panel-soft: #eef3f8;
+        --good: #087f5b;
+        --good-bg: #dff7ec;
+        --warn: #9a5b00;
+        --warn-bg: #fff1cf;
+        --risk: #b42318;
+        --risk-bg: #ffe4e0;
+        --accent: #165dff;
+        --accent-dark: #0f3fa8;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      .page {
+        width: min(1220px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 28px 0 48px;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 22px;
+        margin-bottom: 22px;
+      }
+
+      .eyebrow {
+        color: var(--accent-dark);
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 8px 0;
+        font-size: clamp(28px, 5vw, 48px);
+        line-height: 1.05;
+        letter-spacing: 0;
+      }
+
+      .summary {
+        color: var(--muted);
+        max-width: 820px;
+        font-size: 16px;
+        line-height: 1.55;
+      }
+
+      .stamp {
+        min-width: 200px;
+        color: var(--muted);
+        font-size: 13px;
+        text-align: right;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 14px;
+        margin: 22px 0;
+      }
+
+      .card, .section {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: 0 12px 30px rgba(20, 31, 54, 0.06);
+      }
+
+      .card {
+        padding: 16px;
+        min-height: 112px;
+      }
+
+      .label {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .value {
+        margin-top: 9px;
+        font-size: 28px;
+        font-weight: 800;
+      }
+
+      .hint {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .section {
+        margin-top: 18px;
+        overflow: hidden;
+      }
+
+      .section-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 18px 20px;
+        border-bottom: 1px solid var(--line);
+        background: var(--panel-soft);
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 20px;
+      }
+
+      .section-note {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .content { padding: 18px 20px; }
+
+      .toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 14px 20px;
+        border-bottom: 1px solid var(--line);
+        background: #fbfcfe;
+      }
+
+      .search {
+        width: min(420px, 100%);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 10px 12px;
+        color: var(--ink);
+        font-size: 14px;
+        background: #fff;
+      }
+
+      .select {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 9px 10px;
+        background: #fff;
+        color: var(--ink);
+      }
+
+      .pager {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 14px 20px;
+        border-top: 1px solid var(--line);
+        background: #fbfcfe;
+      }
+
+      .pager-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      button {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 9px 12px;
+        background: #fff;
+        color: var(--ink);
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .chip {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 10px 12px;
+        background: #fff;
+        min-width: 170px;
+      }
+
+      .chip strong {
+        display: block;
+        font-size: 14px;
+      }
+
+      .chip span {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 4px;
+      }
+
+      .status {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        padding: 5px 9px;
+        font-size: 12px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+
+      .status.good { color: var(--good); background: var(--good-bg); }
+      .status.warn { color: var(--warn); background: var(--warn-bg); }
+      .status.risk { color: var(--risk); background: var(--risk-bg); }
+      .status.neutral { color: #475467; background: #eef1f5; }
+
+      .table-wrap {
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 820px;
+      }
+
+      th, td {
+        padding: 13px 12px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+        font-size: 14px;
+      }
+
+      th {
+        color: var(--muted);
+        font-size: 12px;
+        text-transform: uppercase;
+        background: #fff;
+      }
+
+      code {
+        font-family: Consolas, Monaco, monospace;
+        color: #182230;
+        word-break: break-word;
+      }
+
+      .quality-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .file-card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 14px;
+        background: #fff;
+      }
+
+      .file-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .score {
+        font-size: 26px;
+        font-weight: 800;
+        text-align: right;
+      }
+
+      .meter {
+        height: 8px;
+        margin: 12px 0;
+        border-radius: 999px;
+        background: #eaecf0;
+        overflow: hidden;
+      }
+
+      .meter span {
+        display: block;
+        height: 100%;
+        background: var(--accent);
+      }
+
+      .notes {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--muted);
+        line-height: 1.5;
+        font-size: 13px;
+      }
+
+      .warning-list, .scenario-list {
+        display: grid;
+        gap: 10px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .warning-list li, .scenario {
+        padding: 12px 14px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: #fff;
+      }
+
+      .warning-list li {
+        background: var(--warn-bg);
+        color: var(--warn);
+        font-weight: 700;
+      }
+
+      .scenario-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 8px;
+      }
+
+      .empty-state {
+        display: none;
+        color: var(--muted);
+        padding: 18px 20px;
+      }
+
+      @media (max-width: 1050px) {
+        .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      }
+
+      @media (max-width: 900px) {
+        .quality-grid { grid-template-columns: 1fr; }
+      }
+
+      @media (max-width: 640px) {
+        .page {
+          width: min(100% - 20px, 1220px);
+          padding-top: 18px;
+        }
+
+        .topbar, .section-head, .toolbar, .pager {
+          display: block;
+        }
+
+        .stamp {
+          text-align: left;
+          margin-top: 14px;
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .section-note, .pager-actions, .select {
+          margin-top: 10px;
+        }
+
+        .search {
+          width: 100%;
+        }
+
+        .content, .section-head, .toolbar, .pager {
+          padding-left: 14px;
+          padding-right: 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <header class="topbar">
+        <div>
+          <div class="eyebrow">Admin only backend report</div>
+          <h1><%= @overview[:app][:name] %> Overview</h1>
+          <p class="summary">
+            Ye dashboard poore Rails backend ko scan karke routes, files, tests, database, stack, risky scenarios aur unused areas show karta hai.
+            Har large section mein search aur pagination hai, taaki project bada hone par bhi cheezein easily mil jayein.
+          </p>
+        </div>
+        <div class="stamp">
+          Generated<br>
+          <strong><%= @overview[:generated_at].strftime("%d %b %Y, %I:%M %p") %></strong>
+        </div>
+      </header>
+
+      <section class="grid" aria-label="Quick stats">
+        <article class="card"><div class="label">Files</div><div class="value"><%= @overview[:metrics][:files] %></div><div class="hint">Tracked project files scanned.</div></article>
+        <article class="card"><div class="label">App Files</div><div class="value"><%= @overview[:metrics][:app_files] %></div><div class="hint">Controllers, models, views, services.</div></article>
+        <article class="card"><div class="label">Routes</div><div class="value"><%= @overview[:metrics][:routes] %></div><div class="hint">API, OAuth, Devise, admin.</div></article>
+        <article class="card"><div class="label">Risk APIs</div><div class="value"><%= @overview[:metrics][:risk_routes] %></div><div class="hint">High attention endpoints.</div></article>
+        <article class="card"><div class="label">Tests Complete</div><div class="value"><%= @overview[:tests][:complete] %></div><div class="hint"><%= @overview[:tests][:status] %>.</div></article>
+        <article class="card"><div class="label">Tests Pending</div><div class="value"><%= @overview[:tests][:pending] %></div><div class="hint">Missing + empty test files.</div></article>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <h2>System Stack</h2>
+          <p class="section-note">Project mein kya use ho raha hai aur kya inactive hai.</p>
+        </div>
+        <div class="content">
+          <div class="chips">
+            <% @overview[:stack].each do |item| %>
+              <div class="chip">
+                <strong><%= item[:name] %></strong>
+                <span><%= item[:purpose] %></span>
+                <span class="status <%= item[:enabled] ? "good" : "neutral" %>"><%= item[:enabled] ? "Enabled" : "Not active" %></span>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" data-paginated data-page-size="8">
+        <div class="section-head"><h2>API Risk Map</h2><p class="section-note">Search method, path, controller, risk reason.</p></div>
+        <%= render_inline_search_controls("routes-search", "Search routes...") %>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Path</th><th>Target</th><th>Status</th><th>Reason</th></tr></thead>
+            <tbody>
+              <% @overview[:routes].each do |route| %>
+                <tr data-row>
+                  <td><strong><%= route[:verb] %></strong></td>
+                  <td><code><%= route[:path] %></code></td>
+                  <td><code><%= route[:target].presence || "framework" %></code></td>
+                  <td><span class="status <%= route[:tone] %>"><%= route[:level] %></span></td>
+                  <td><%= route[:reason] %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+        <div class="empty-state">No matching routes found.</div>
+        <%= render_inline_pager %>
+      </section>
+
+      <section class="section" data-paginated data-page-size="8">
+        <div class="section-head"><h2>Project Files</h2><p class="section-note">Poore project ki searchable file inventory.</p></div>
+        <%= render_inline_search_controls("files-search", "Search files, type, status...") %>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Path</th><th>Type</th><th>Ext</th><th>Lines</th><th>Size</th><th>Status</th></tr></thead>
+            <tbody>
+              <% @overview[:files].each do |file| %>
+                <tr data-row>
+                  <td><code><%= file[:path] %></code></td>
+                  <td><%= file[:type] %></td>
+                  <td><%= file[:extension] %></td>
+                  <td><%= file[:lines] %></td>
+                  <td><%= number_to_human_size(file[:size]) %></td>
+                  <td><span class="status <%= file[:status] == "OK" ? "good" : "warn" %>"><%= file[:status] %></span></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+        <div class="empty-state">No matching files found.</div>
+        <%= render_inline_pager %>
+      </section>
+
+      <section class="section" data-paginated data-page-size="6">
+        <div class="section-head"><h2>Code Quality</h2><p class="section-note">Har file ka quick quality score aur notes.</p></div>
+        <%= render_inline_search_controls("quality-search", "Search quality by file, note, label...") %>
+        <div class="content">
+          <div class="quality-grid">
+            <% @overview[:quality].each do |file| %>
+              <article class="file-card" data-row>
+                <div class="file-top">
+                  <div>
+                    <code><%= file[:path] %></code>
+                    <div class="hint"><%= file[:type] %> · <%= file[:lines] %> lines</div>
+                  </div>
+                  <div>
+                    <span class="status <%= file[:tone] %>"><%= file[:label] %></span>
+                    <div class="score"><%= file[:score] %></div>
+                  </div>
+                </div>
+                <div class="meter"><span style="width: <%= file[:score] %>%"></span></div>
+                <ul class="notes">
+                  <% file[:notes].each do |note| %>
+                    <li><%= note %></li>
+                  <% end %>
+                </ul>
+              </article>
+            <% end %>
+          </div>
+        </div>
+        <div class="empty-state">No matching quality items found.</div>
+        <%= render_inline_pager %>
+      </section>
+
+      <section class="section" data-paginated data-page-size="6">
+        <div class="section-head"><h2>Risk Scenarios</h2><p class="section-note">App grow hone par possible failure/security scenarios.</p></div>
+        <%= render_inline_search_controls("scenario-search", "Search scenarios...") %>
+        <div class="content">
+          <ul class="scenario-list">
+            <% @overview[:scenarios].each do |item| %>
+              <li class="scenario" data-row>
+                <div class="scenario-title">
+                  <strong><%= item[:name] %></strong>
+                  <span class="status <%= item[:tone] %>"><%= item[:severity] %></span>
+                </div>
+                <div class="hint"><strong>Risk:</strong> <%= item[:risk] %></div>
+                <div class="hint"><strong>Action:</strong> <%= item[:action] %></div>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+        <div class="empty-state">No matching scenarios found.</div>
+        <%= render_inline_pager %>
+      </section>
+
+      <section class="section" data-paginated data-page-size="8">
+        <div class="section-head"><h2>Test Gaps</h2><p class="section-note">Kis app file ke matching tests missing hain.</p></div>
+        <%= render_inline_search_controls("tests-search", "Search missing tests...") %>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>File</th><th>Type</th><th>Reason</th></tr></thead>
+            <tbody>
+              <% @overview[:tests][:missing].each do |item| %>
+                <tr data-row>
+                  <td><code><%= item[:path] %></code></td>
+                  <td><%= item[:type] %></td>
+                  <td><%= item[:reason] %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+        <div class="empty-state">No missing test gaps found.</div>
+        <%= render_inline_pager %>
+      </section>
+
+      <section class="section" data-paginated data-page-size="8">
+        <div class="section-head"><h2>Database Tables</h2><p class="section-note">Schema ka quick database overview.</p></div>
+        <%= render_inline_search_controls("db-search", "Search tables/columns...") %>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Table</th><th>Columns</th><th>Important columns</th></tr></thead>
+            <tbody>
+              <% @overview[:database].each do |table| %>
+                <tr data-row>
+                  <td><strong><%= table[:name] %></strong></td>
+                  <td><%= table[:columns] %></td>
+                  <td><%= table[:important_columns] %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+        <div class="empty-state">No matching database table found.</div>
+        <%= render_inline_pager %>
+      </section>
+
+      <section class="section">
+        <div class="section-head"><h2>Warnings</h2><p class="section-note">Pehle in points ko fix karna high impact rahega.</p></div>
+        <div class="content">
+          <ul class="warning-list">
+            <% @overview[:warnings].each do |warning| %>
+              <li><%= warning %></li>
+            <% end %>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section" data-paginated data-page-size="8">
+        <div class="section-head"><h2>Unused / Partial</h2><p class="section-note">Installed/configured cheezein jinka app-level use abhi limited hai.</p></div>
+        <%= render_inline_search_controls("unused-search", "Search unused features...") %>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Feature</th><th>Status</th><th>Note</th></tr></thead>
+            <tbody>
+              <% @overview[:unused].each do |item| %>
+                <tr data-row>
+                  <td><strong><%= item[:name] %></strong></td>
+                  <td><span class="status neutral"><%= item[:status] %></span></td>
+                  <td><%= item[:note] %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+        <div class="empty-state">No matching feature found.</div>
+        <%= render_inline_pager %>
+      </section>
+    </main>
+
+    <script>
+      function setupPaginatedSection(section) {
+        const rows = Array.from(section.querySelectorAll("[data-row]"));
+        const search = section.querySelector("[data-search]");
+        const pageSizeSelect = section.querySelector("[data-page-size-select]");
+        const prev = section.querySelector("[data-prev]");
+        const next = section.querySelector("[data-next]");
+        const info = section.querySelector("[data-page-info]");
+        const empty = section.querySelector(".empty-state");
+        let page = 1;
+
+        function filteredRows() {
+          const query = (search?.value || "").trim().toLowerCase();
+          if (!query) return rows;
+          return rows.filter((row) => row.textContent.toLowerCase().includes(query));
+        }
+
+        function render() {
+          const size = Number(pageSizeSelect?.value || section.dataset.pageSize || 8);
+          const visible = filteredRows();
+          const totalPages = Math.max(1, Math.ceil(visible.length / size));
+          page = Math.min(page, totalPages);
+          const start = (page - 1) * size;
+          const end = start + size;
+
+          rows.forEach((row) => row.style.display = "none");
+          visible.slice(start, end).forEach((row) => row.style.display = "");
+
+          if (empty) empty.style.display = visible.length ? "none" : "block";
+          if (info) info.textContent = `${visible.length} items · Page ${page} of ${totalPages}`;
+          if (prev) prev.disabled = page <= 1;
+          if (next) next.disabled = page >= totalPages;
+        }
+
+        search?.addEventListener("input", () => { page = 1; render(); });
+        pageSizeSelect?.addEventListener("change", () => { page = 1; render(); });
+        prev?.addEventListener("click", () => { page -= 1; render(); });
+        next?.addEventListener("click", () => { page += 1; render(); });
+        render();
+      }
+
+      document.querySelectorAll("[data-paginated]").forEach(setupPaginatedSection);
+    </script>
+  </body>
+</html>
